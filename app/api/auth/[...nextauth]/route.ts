@@ -4,7 +4,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const prisma = new PrismaClient()
-const handler =  NextAuth({
+export const authOptions =  NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -77,6 +77,7 @@ const handler =  NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.username = user.username;
       }
       return token;
     },
@@ -99,6 +100,4 @@ const handler =  NextAuth({
   }
 
 })
-
-export { handler as GET, handler as POST };
 

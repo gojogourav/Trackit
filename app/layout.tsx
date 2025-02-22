@@ -1,3 +1,4 @@
+import TopBar from "@/components/ui/Topbar";
 import "./globals.css";
 
 export default function RootLayout({
@@ -10,6 +11,7 @@ export default function RootLayout({
       <body
         className={``}
       >
+      <TopBar />
         {children}
       </body>
     </html>

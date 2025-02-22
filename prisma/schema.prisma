@@ -7,48 +7,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Activity {
-  id                         String    @id
-  activityTitle              String
-  description                String?
-  userId                     String
-  createdAt                  DateTime  @default(now())
-  updatedAt                  DateTime
-  private                    Boolean   @default(true)
-  Activityphoto              String?
-  User_Activity_userIdToUser User      @relation("Activity_userIdToUser", fields: [userId], references: [id])
-  TimeLog                    TimeLog[]
-  User_ActivityMembership    User[]    @relation("ActivityMembership")
+model User {
+  follower          User[]     @relation("UserFollows")
+  following         User[]     @relation("UserFollows")
+  id                String     @id @default(uuid())
+  name              String?
+  username          String     @unique
+  password          String
+  email             String     @unique
+  createdAt         DateTime   @default(now())
+  createdActivities Activity[] @relation("UserActivities")
+  memberActivities  Activity[] @relation("ActivityMembership")
+  profilePhoto      String
+  tokenVersion Int @default(0)
+}
 
-  @@index([createdAt])
+model Activity {
+  creator       User      @relation("UserActivities", fields: [userId], references: [id])
+  members       User[]    @relation("ActivityMembership")
+  id            String    @id @default(uuid())
+  activityTitle         String
+  description   String?
+  userId        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  private       Boolean   @default(true)
+  timelogs      TimeLog[]
+  Activityphoto String?
+
   @@index([userId])
+  @@index([createdAt])
 }
 
 model TimeLog {
   timeLogTitle String?
+  activity     Activity @relation(fields: [activityId], references: [id])
   activityId   String
-  id           String   @id
+  id           String   @id @default(uuid())
+  sessionTime  Int
   notes        String?
   createdAt    DateTime @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime @updatedAt
   SessionPhoto String?
-  sessionTime  Int
-  Activity     Activity @relation(fields: [activityId], references: [id])
 
   @@index([activityId])
-}
-
-model User {
-  id                             String     @id @default(uuid())
-  name                           String?
-  username                       String     @unique
-  password                       String
-  email                          String     @unique
-  createdAt                      DateTime   @default(now())
-  profilePhoto                   String     @default("")
-  tokenVersion                   Int        @default(0)
-  Activity_Activity_userIdToUser Activity[] @relation("Activity_userIdToUser")
-  Activity_ActivityMembership    Activity[] @relation("ActivityMembership")
-  User_A                         User[]     @relation("UserFollows")
-  User_B                         User[]     @relation("UserFollows")
 }
