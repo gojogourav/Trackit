@@ -1,82 +1,51 @@
-import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcryptjs'
-import { z } from 'zod'
+// app/api/auth/login/route.ts
+import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import * as jose from 'jose';
 
-const prisma = new PrismaClient()
-
-
-const registerSchema = z.object({
-  username: z.string().min(2).max(20),
-  password: z.string().min(2),
-  email: z.string().email(),
-})
-
+const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
+  const { profilePic,name,email,username, password } = await req.json();
   try {
-    const body = await req.json()
-    const result = registerSchema.safeParse(body)
+    const userAlreadyExists = await prisma.user.findFirst({ where: {OR:[{username:username},{email:email}]} } );
+    if (userAlreadyExists){
+       return NextResponse.json({ error: 'User already exists ' }, { status: 401 });
+      }
+    const hashedPassword = await bcrypt.hash(password,12)
 
-    if (!result.success) {
-      console.log(result);
-      
-      return NextResponse.json(
-        { error: result.error.flatten() },
-        { status: 400 }
-      )
-    }
-
-
-    
-    const { username, password, email,profilePhoto } = body
-    
-    // Check if username exists
-    const [existingUsername, existingEmail] = await prisma.$transaction([
-      prisma.user.findUnique({ where: { username } }),
-      prisma.user.findUnique({ where: { email } })
-    ])
-
-    if (existingUsername) {
-      return NextResponse.json(
-        { error: "Username already exists" },
-        { status: 409 }
-      )
-    }
-
-    if (existingEmail) {
-      return NextResponse.json(
-        { error: "Email already registered" },
-        { status: 409 }
-      )
-    }
-
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    // Create user
-
- 
     const user = await prisma.user.create({
-      data: {
-        username,
-        password: hashedPassword.toString(),
+      data:{
         email,
+        username,
+        profilePhoto:profilePic||"",
+        name,
+        password:hashedPassword
       }
     })
 
-    return NextResponse.json({ 
-      success: true,
-      userId: user.id
-    })
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const token = await new jose.SignJWT({ userId: user.id })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('2h')
+      .sign(secret);
 
+    const response = NextResponse.json({ success: true });
+    response.cookies.set('auth-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 2
+    });
+
+    return NextResponse.json(response)
   } catch (error) {
     console.log(error);
     
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
-    )
+    );
   }
 }

@@ -1,19 +1,17 @@
 "use client"
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { FormControl, Form, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from "next/image";
 import { CardBody, CardContainer, CardItem } from '@/components/ui/3d-card';
 import Link from "next/link";
 
-import { Input } from "@/components/ui/input"
+
 import React, { useEffect, useState } from 'react'
-import { Form } from '@/components/ui/form'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation';
-import bcrypt from 'bcryptjs';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 
 
@@ -24,8 +22,7 @@ const formSchema = z.object({
 
 
 function Login() {
-  // const [identifier,setIdentifier] = useState("")
-  // const [password,setPassword] = useState("")
+
   const [error, setError] = useState("")
 
 
@@ -37,20 +34,17 @@ function Login() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const verifytest = await bcrypt.compare("gourav", "$2b$10$NB5.kcCMfux/qACudmEjoeDGV.8RWmwFjKz7lCGGynm6iDQrosGyC")
-    console.log(verifytest);
-
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        username: values.identifier,
-        password: values.password
+      console.log("THESE ARE IDENTIFIERS", values.identifier);
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(values)
       })
 
-      if (result?.error) {
-        console.log(result.error);
-        
-        setError(result.error)
+      if (!res.ok) {
+        const errorData = await res.json()
+        setError(errorData.error)
       }
       router.push("/")
     } catch (error) {
@@ -60,10 +54,11 @@ function Login() {
 
   }
 
-  
+
 
 
   return (
+
 
     <div className='bg-black flex flex-col items-center h-screen  justify-center '>
 
@@ -95,9 +90,9 @@ function Login() {
             </CardItem>
             <h1 className='justify-center flex mt-4 font-bold text-neutral-700 text-xl'>Login </h1>
             {error &&
-              <h1 className='justify-center flex mt-4 font-bold text-neutral-700 text-xl'>{error} </h1>
+              <h1 className='justify-center flex  font-bold text-neutral-700 text-xl'>{error} </h1>
             }
-            <div className="flex justify-center content-center w-full mt-6">
+            <div className="flex justify-center content-center w-full ">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 ">
                   <FormField
@@ -107,7 +102,7 @@ function Login() {
                       <FormItem>
                         <FormLabel className=''>Username</FormLabel>
                         <FormControl>
-                          <Input className='w-80   border text-black' placeholder="username" {...field} />
+                          <Input className='w-80 border-black   border text-black' placeholder="username" {...field} />
                         </FormControl>
 
                         <FormMessage />
@@ -121,7 +116,7 @@ function Login() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input className='  border text-black' type='password' placeholder="password" {...field} />
+                          <Input className='  border border-black text-black' type='password' placeholder="password" {...field} />
                         </FormControl>
 
                         <FormMessage />
@@ -145,5 +140,6 @@ function Login() {
     </div>
   )
 }
+
 
 export default Login;

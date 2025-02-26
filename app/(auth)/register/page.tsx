@@ -17,20 +17,22 @@ import { useRouter } from 'next/navigation';
 const formSchema = z.object({
   username: z.string().min(2, { message: "Username must be atleast 2 characters" }).max(16, { message: "Username must be atmost 16 characters" }),
   password: z.string().min(2, { message: "Password must be atleast 2 characters" }).max(16, { message: "Password must be atmost 16 characters" }),
-  email: z.string().email()
+  email: z.string().email(),
+  name:z.string()
 
 })
 function Login() {
   const [error, setError] = useState('')
   const [submitting,setIsSubmitting] = useState(false)
-
+  const [success,setSuccess] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       email: "",
-      password: ""
+      password: "",
+      name:""
     }
   })
 
@@ -38,6 +40,7 @@ function Login() {
     setIsSubmitting(true)
 
     try {
+      
       const response = await fetch("/api/auth/register", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,8 +53,10 @@ function Login() {
       }
       console.log(response);
       
-
-      router.push("/login")
+      setSuccess(true)
+      
+      form.reset()
+      // router.push("/login")
     }
     catch (error: any) {
       setError(error.message||"Registration failed")
@@ -98,6 +103,11 @@ function Login() {
                 {error}
               </div>
             )}
+            {success && (
+              <div className="mb-4 p-3 bg-green-100 text-green-600 rounded-md">
+                Please proceed to login 
+              </div>
+            )}
             <div className="flex justify-center content-center w-full mt-6">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 ">
@@ -106,9 +116,24 @@ function Login() {
                     name="username"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className=''>Username</FormLabel>
+                        <FormLabel className='text-black'>Username</FormLabel>
                         <FormControl>
-                          <Input className='w-80   border text-black' placeholder="username" {...field} />
+                          <Input className='w-80 border-neutral-400   border text-black' placeholder="username" {...field} />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className='text-black'>Name</FormLabel>
+                        <FormControl>
+
+                          <Input className='w-80 border-neutral-400  border text-black' placeholder="name" {...field} />
                         </FormControl>
 
                         <FormMessage />
@@ -120,9 +145,9 @@ function Login() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className='text-black'>Email</FormLabel>
                         <FormControl>
-                          <Input className='border text-black' type='email' placeholder="email" {...field} />
+                          <Input className='border border-neutral-400 text-black' type='email' placeholder="email" {...field} />
                         </FormControl>
 
                         <FormMessage />
@@ -134,9 +159,9 @@ function Login() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className='text-black'>Password</FormLabel>
                         <FormControl>
-                          <Input className='  border text-black' type='password' placeholder="password" {...field} />
+                          <Input className='  border border-neutral-400 text-black' type='password' placeholder="password" {...field} />
                         </FormControl>
 
                         <FormMessage />

@@ -15,18 +15,22 @@ model User {
   username          String     @unique
   password          String
   email             String     @unique
+  updatedAt         DateTime?   @updatedAt
   createdAt         DateTime   @default(now())
   createdActivities Activity[] @relation("UserActivities")
   memberActivities  Activity[] @relation("ActivityMembership")
   profilePhoto      String
-  tokenVersion Int @default(0)
+  emailVerified     Boolean?
+
 }
+
+
 
 model Activity {
   creator       User      @relation("UserActivities", fields: [userId], references: [id])
   members       User[]    @relation("ActivityMembership")
   id            String    @id @default(uuid())
-  activityTitle         String
+  activityTitle String
   description   String?
   userId        String
   createdAt     DateTime  @default(now())

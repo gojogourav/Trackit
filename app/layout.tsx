@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={``}
+        className={`bg-black text-white`}
       >
       <TopBar />
         {children}
