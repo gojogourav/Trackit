@@ -6,6 +6,7 @@ import IncomingForm from 'formidable/Formidable';
 import { Readable } from 'stream';
 import { error } from 'console';
 import { PrismaClient } from '@prisma/client'
+import { jwtVerify } from 'jose';
 
 
 cloudinary.config({
@@ -18,18 +19,29 @@ interface UplaodRequest {
     RequestType: "profilePhoto" | "session"
 }
 
-interface CloudinaryResult{
-    public_id:string
+interface CloudinaryResult {
+    public_id: string
 }
 
 const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {
     try {
+        const token = await request.cookies.get('access_token')?.value
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+        if(!token) return NextResponse.json({error:"error no token provided"})
+        const decode = await jwtVerify(token,secret)
+        const payload = decode.payload
+        const relatedId = String(payload.user)
+
+        console.log("THIS IS USERID - ",relatedId);
+        
+    
+
+
         const formData = await request.formData();
         const file = formData.get('image') as File;
         const uploadType = formData.get('type') as 'profile' | 'session';
-        const relatedId = formData.get('id') as string
 
         if (!file || !uploadType || !relatedId) {
             return NextResponse.json(
@@ -72,20 +84,20 @@ export async function POST(request: NextRequest) {
                 (error, result) => {
                     if (error) reject(error);
                     else resolve(result as CloudinaryResult)
-                }   
+                }
             )
             uplaodStream.end(buffer)
         }
-    )
+        )
 
-    const IMAGE_URL = cloudinary.url(result.public_id,{secure:true})
+        const IMAGE_URL = cloudinary.url(result.public_id, { secure: true })
 
         if (uploadType === 'profile') {
             const user = await prisma.user.findUnique({
                 where: { id: relatedId },
             })
 
-            if(!user) return NextResponse.json({error:"User not found"})
+            if (!user) return NextResponse.json({ error: "User not found" })
 
             if (user?.profilePhoto) {
                 await cloudinary.uploader.destroy(user.profilePhoto)
@@ -96,21 +108,21 @@ export async function POST(request: NextRequest) {
                     profilePhoto: IMAGE_URL,
                 }
             })
-            return NextResponse.json({success:true},{url:updatedUser.profilePhoto})
+            return NextResponse.json( { url: updatedUser.profilePhoto })
 
-        }else if(uploadType==='session'){
+        } else if (uploadType === 'session') {
             const user = await prisma.user.findUnique({
-                where:{id:relatedId}
+                where: { id: relatedId }
             })
 
-            if(!user) return NextResponse.json({error:"User not found"})
-            
+            if (!user) return NextResponse.json({ error: "User not found" })
+
             const updatedtimelog = await prisma.timeLog.update({
-                where:{id:relatedId},
-                data:{SessionPhoto:IMAGE_URL}
+                where: { id: relatedId },
+                data: { SessionPhoto: IMAGE_URL }
             })
 
-            return NextResponse.json({success:true},{url:updatedtimelog.SessionPhoto||""})
+            return NextResponse.json({ url: updatedtimelog.SessionPhoto || "" })
         }
 
 
@@ -121,7 +133,7 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         );
 
-    }finally {
+    } finally {
         await prisma.$disconnect();
     }
 
