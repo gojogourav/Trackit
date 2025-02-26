@@ -8,11 +8,11 @@ import { jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
 const prisma =new PrismaClient()
 
-export async function PUT(request: NextRequest,response:NextResponse,{params}:{params:{id:string}}) {
+export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const { name, username, email, profilePhoto,password } = body;
+    const { name, username, email,password } = body;
 
     const token = await request.cookies.get("access_token")?.value
     const secret = new TextEncoder().encode(process.env.JWT_SECRET)
@@ -30,7 +30,7 @@ export async function PUT(request: NextRequest,response:NextResponse,{params}:{p
       where:{id:id!}
     })
 
-    const verificationofPassword = bcrypt.compare(password,userbefore?.password!)
+    const verificationofPassword = await bcrypt.compare(password,userbefore?.password!)
 
     if(!verificationofPassword) return NextResponse.json({error:"incorrect password "})
 
@@ -41,7 +41,6 @@ export async function PUT(request: NextRequest,response:NextResponse,{params}:{p
         name,
         username,
         email,
-        profilePhoto,
       },
     });
 
