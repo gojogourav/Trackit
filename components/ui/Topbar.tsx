@@ -9,9 +9,10 @@ function TopBar() {
   return (
     <div>
 
-        <div className='top-0 p-3 text-white font-bold bg-black items-center content-center justify-around w-full flex text-center
+        <div className='top-0 p-3 mb-0  text-white font-bold bg-black items-center content-center justify-around w-full flex text-center
             font-sans text-lg 
         '>
+            
             <Link href='/'  className={`text-xl cursor-pointer hover:text-yellow-300 ${pathname==='/'?`text-yellow-300`:''}`} >
                 Time Tracker
             </Link>

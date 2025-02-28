@@ -4,32 +4,39 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
+import { jwtVerify } from "jose";
 
 const prisma = new PrismaClient()
 
 export async function POST(req: NextRequest) {
     try {
-        const session = await getServerSession()
-        if (!session) {
+        const token = await req.cookies.get('access_token')?.value
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+        if(!token) return NextResponse.json({error:"No token provided"})
+        const decode = await jwtVerify(token,secret)
+        const payload =  (await decode).payload
+        const userId = String(payload.user)
+
+        if (!userId) {
             return NextResponse.json({ error: "Session not provided" },{status:401});
         }
 
 
         const user = await prisma.user.findUnique({
             where: {
-                id: session.user.id
+                id: userId
             }
         })
 
 
         const { 
             sessionTime,
-            timeLogTitle,
             activityId,
             notes,
             SessionPhoto
-
         } = await req.json()
+        console.log(activityId);
+        
 
         if (!activityId) {
             return NextResponse.json({ error: "Please select a activity before submitting" },{status:401})
@@ -42,9 +49,7 @@ export async function POST(req: NextRequest) {
 
         if(!activity){
             return NextResponse.json({ error: "Invalld activity is chosen" },{status:401})
-
         }
-
 
         if (!user) {
             return NextResponse.json({ error: "Failed to authenticate user" })
@@ -53,7 +58,6 @@ export async function POST(req: NextRequest) {
         const newSession = await prisma.timeLog.create({
             data: {
                 sessionTime,
-                timeLogTitle,
                 activityId,
                 notes,
                 SessionPhoto,
