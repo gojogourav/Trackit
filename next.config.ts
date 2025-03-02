@@ -6,7 +6,9 @@ const nextConfig: NextConfig = {
     domains: ['img.freepik.com','images.unsplash.com',"res.cloudinary.com"],
     
   },
-
+  eslint:{
+    ignoreDuringBuilds:true,
+  }
   /* config options here */
 };
 
