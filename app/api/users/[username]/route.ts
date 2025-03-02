@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 const prisma = new PrismaClient()
-export async function GET(
+export default async function GET(
     req: NextRequest,
     { params }: { params: { username: string } }
-  ){
+) {
 
     const username = await params.username
     try {
@@ -25,8 +25,8 @@ export async function GET(
         const user = await prisma.user.findFirst({
             where: {
                 OR: [
-                    {username},
-                    {id:username}
+                    { username },
+                    { id: username }
                 ]
             },
 
