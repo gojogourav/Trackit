@@ -35,7 +35,6 @@ const FollowUnfollowButton = ({ userId }:FollowButtonProps) => {
     };
 
     fetchFollowStatus();
-
   }, [userId,following]);
 
   const handleFollowToggle = async () => {

@@ -91,8 +91,7 @@ export default function TimeLogCharts() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/timelog/get-user-timelogs')
-        if (!response.ok) throw new Error('Failed to fetch data')
+        const response = await fetch('/api/timelog/get-created-timelogs')
         const { timelog } = await response.json()
         setTimeLogs(timelog)
       } catch (error) {
@@ -139,9 +138,9 @@ export default function TimeLogCharts() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="w-full max-w-6xl mx-auto-0  h-screen"
+        className="w-full max-w-6xl  mt-32  "
       >
-        <div className="space-y-6 h-screen mt-5">
+        <div className="space-y-6  mt-5  ">
           <div className="flex justify-between items-center">
             <h2 className="text-3xl font-bold text-foreground text-white">Time Analytics</h2>
             <Select value={timePeriod} onValueChange={(v: any) => setTimePeriod(v)}>
@@ -188,7 +187,7 @@ export default function TimeLogCharts() {
             </Card>
 
             <Card>
-              <CardHeader>
+              <CardHeader className=''>
                 <CardTitle>Activity Distribution</CardTitle>
               </CardHeader>
               <CardContent>
@@ -213,7 +212,6 @@ export default function TimeLogCharts() {
                 </div>
               </CardContent>
             </Card>
-
             <Card className="md:col-span-2 ">
               <CardHeader>
                 <CardTitle>Activity Breakdown</CardTitle>
@@ -253,6 +251,7 @@ export default function TimeLogCharts() {
                 </div>
               </CardContent>
             </Card>
+
           </div>
         </div>
       </motion.div>

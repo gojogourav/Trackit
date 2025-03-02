@@ -15,6 +15,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Check, ChevronsUpDown, Plus, Clock, List } from "lucide-react"
+import { CldImage } from 'next-cloudinary';
 
 interface Activity {
   id: string
@@ -40,6 +41,13 @@ function Page() {
   const [sessionPhoto, setSessionPhoto] = useState("")
   const [error, setError] = useState("")
   const [activities, setActivities] = useState<Activity[]>([])
+
+
+
+  const [file,setFile] = useState<File|null>(null);
+  const [fileUrl,setFileUrl] = useState('');
+  const [loading,setIsLoading] = useState(false);
+  const [imageUrl,setImageUrl] = useState('')
   
   // New state for managing popups
   const [isAddActivityOpen, setIsAddActivityOpen] = useState(false)
@@ -51,7 +59,7 @@ function Page() {
 
   const fetchActivities = async () => {
     try {
-      const res = await fetch("/api/activities/get-joined-activity")
+      const res = await fetch("/api/activities/get-joined-activity",{method:"GET"})
       
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`)
@@ -64,13 +72,7 @@ function Page() {
 
       const body = await res.json()
       
-      const formattedActivities = body.activities.map((activity: Activity) => ({
-        ...activity,
-        value: activity.id,
-        label: activity.activityTitle
-      }))
-      
-      setActivities(formattedActivities)
+      setActivities(body.activities)
     } catch (error: any) {
       console.error("Fetch error:", error)
       setError(error.message)
@@ -128,15 +130,52 @@ function Page() {
     return () => clearInterval(interval)
   }, [paused, isBreak, isLongBreak, breakDuration, workDuration, longBreakDuration])
 
+
+
+
   const uploadTimelog = async (e: React.FormEvent) => {
     e.preventDefault()
+  
     try {
+      // Validate inputs
       if (!activityId) {
         setError("Please select an activity")
         return
       }
-
-      const res = await fetch('/api/timelog/add-timelog', {
+  
+      if (!file) {
+        setError("Please select a valid file")
+        return
+      }
+      
+      if (!notes.trim()) {
+        setError("Please add some notes about your session")
+        return
+      }
+  
+      setError('')
+      setIsLoading(true)
+      
+      // Step 1: Upload the image to Cloudinary
+      const formData = new FormData()
+      formData.append('image', file)
+      formData.append('type', 'session')
+  
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+  
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json()
+        throw new Error(errorData.error || 'Image upload failed')
+      }
+  
+      const uploadData = await uploadResponse.json()
+      const SessionPhoto = uploadData.url
+      
+      // Step 2: Create the timelog entry with the image URL
+      const timelogResponse = await fetch('/api/timelog/add-timelog', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -145,22 +184,29 @@ function Page() {
           sessionTime: workDuration, 
           activityId, 
           notes, 
-          sessionPhoto 
+          SessionPhoto
         })
       })
-
-      if (!res.ok) {
-        throw new Error('Failed to submit timelog')
+      console.log("THIS IS SESSIONPHOTO URL",sessionPhoto);
+      
+  
+      if (!timelogResponse.ok) {
+        const errorData = await timelogResponse.json()
+        throw new Error(errorData.error || 'Failed to submit timelog')
       }
-
+  
       console.log("Time logged successfully")
+      
       // Reset form and close dialog
       setNotes("")
-      setSessionPhoto("")
+      setFile(null)
+      setFileUrl("")
       setIsTimelogDialogOpen(false)
     } catch (error: any) {
       console.error("Submission error:", error)
-      setError(error.message)
+      setError(error.message || "An unknown error occurred")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -210,6 +256,32 @@ function Page() {
     setSelectedActivity(activity)
     setActivityId(activity.id)
   }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+
+    if(!selectedFile) console.log("THERE IS NO FUCKING SELECTEDFILE");
+    
+    console.log("THIS IS THE SELECTED FILE",selectedFile);
+    if(!selectedFile) return;
+    if (selectedFile) {
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(selectedFile.type)) {
+        setError('Invalid file type. Please upload JPEG, PNG, or WEBP.');
+        return;
+      }
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        setError('File size exceeds 5MB limit.');
+        return;
+      }
+
+      setFile(selectedFile);
+      const fileUrl = URL.createObjectURL(selectedFile)
+      setFileUrl(fileUrl)
+      setError('');
+    }
+  };
+
+
 
   return (
     <div className='flex items-center justify-center h-screen'>
@@ -301,7 +373,7 @@ function Page() {
                         No activities found. Add a new activity first.
                       </p>
                     ) : (
-                      <div className="max-h-64 overflow-y-auto">
+                      <div className="max-h-64 ">
                         {activities.map((activity) => (
                           <div 
                             key={activity.id} 
@@ -501,17 +573,45 @@ function Page() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="sessionPhoto" className="block mb-1 font-medium">
-                      Session Photo URL (Optional)
-                    </label>
-                    <input
-                      id="sessionPhoto"
-                      type="url"
-                      value={sessionPhoto}
-                      onChange={(e) => setSessionPhoto(e.target.value)}
-                      placeholder="Enter image URL"
-                      className="w-full p-2 border rounded-md"
-                    />
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Session Image
+                        </label>
+                        <input
+                            type="file"
+                            onChange={handleFileChange}
+                            className="w-full p-2 border rounded-md"
+                            accept="image/jpeg, image/png, image/webp"
+                            required
+                        />
+                    </div>
+                    {file ? <div className="relative" >
+                        <CldImage
+                            height={500}
+                            width={500}
+                            crop='fill'
+                            gravity='face'
+                            src={fileUrl}
+                            alt="Social media preview"
+                            className="rounded-lg border"
+                        />
+                    </div> :
+                        <div className="p-3 text-sm rounded-md   bg-red-100 text-red-800">
+                            Select a image
+
+                        </div>
+                    }
+
+
+                    {/* <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+                    >
+                        {loading ? 'Uploading...' : 'Upload new profile pic'}
+                    </button> */}
+
+                
                   </div>
                   <div className="font-medium">
                     Session Duration: {formatTime(workDuration)}

@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
                 activityId,
                 notes,
                 SessionPhoto,
-
+                userId
             }
         })
 

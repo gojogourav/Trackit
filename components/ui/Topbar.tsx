@@ -35,7 +35,7 @@ function TopBar() {
     
                 LeaderBoard
                 </Link>
-                <Link href='/profile' className={`cursor-pointer hover:text-yellow-300 ${pathname==='/profile'?`text-yellow-300`:''}`}>
+                <Link href='/user/getall' className={`cursor-pointer hover:text-yellow-300 ${pathname==='/profile'?`text-yellow-300`:''}`}>
     
                 Profile
                 </Link>

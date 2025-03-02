@@ -51,7 +51,7 @@ const Profile = ({ username }: ProfileProps) => {
     if (!user) return <div className="p-4">User not found</div>;
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4">
+        <div className=" flex items-center justify-center p-4">
             <CardContainer className="inter-var w-full max-w-md">
                 <CardBody className="bg-gray-50 relative group/card dark:bg-black dark:border-white/[0.2] border-black/[0.1] h-auto rounded-xl p-6 border">
                     

@@ -15,9 +15,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
-interface UplaodRequest {
-    RequestType: "profilePhoto" | "session"
-}
+
 
 interface CloudinaryResult {
     public_id: string
@@ -33,11 +31,10 @@ export async function POST(request: NextRequest) {
         const decode = await jwtVerify(token,secret)
         const payload = decode.payload
         const relatedId = String(payload.user)
+        console.log("THIS IS THE RELATED ID",relatedId);
+        
 
         console.log("THIS IS USERID - ",relatedId);
-        
-    
-
 
         const formData = await request.formData();
         const file = formData.get('image') as File;
@@ -67,7 +64,6 @@ export async function POST(request: NextRequest) {
         }
 
         const buffer = Buffer.from(await file.arrayBuffer());
-        const redable = Readable.from(buffer);
 
         const uploadOptions = {
             folder: `${uploadType}_uploads/${relatedId}`,
@@ -75,7 +71,6 @@ export async function POST(request: NextRequest) {
                 [{ width: 500, height: 500, crop: 'fill', gravity: 'face' }] :
                 [],
             resource_type: 'auto' as const
-
         }
 
         const result = await new Promise<CloudinaryResult>((resolve, reject) => {
@@ -117,12 +112,7 @@ export async function POST(request: NextRequest) {
 
             if (!user) return NextResponse.json({ error: "User not found" })
 
-            const updatedtimelog = await prisma.timeLog.update({
-                where: { id: relatedId },
-                data: { SessionPhoto: IMAGE_URL }
-            })
-
-            return NextResponse.json({ url: updatedtimelog.SessionPhoto || "" })
+            return NextResponse.json({ url: IMAGE_URL || "" })
         }
 
 

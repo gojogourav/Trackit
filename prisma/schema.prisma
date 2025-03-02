@@ -15,16 +15,14 @@ model User {
   username          String     @unique
   password          String
   email             String     @unique
-  updatedAt         DateTime?   @updatedAt
+  updatedAt         DateTime?  @updatedAt
   createdAt         DateTime   @default(now())
   createdActivities Activity[] @relation("UserActivities")
   memberActivities  Activity[] @relation("ActivityMembership")
   profilePhoto      String
   emailVerified     Boolean?
-
+  timeLog           TimeLog[]  @relation("userTimelogs")
 }
-
-
 
 model Activity {
   creator       User      @relation("UserActivities", fields: [userId], references: [id])
@@ -44,7 +42,6 @@ model Activity {
 }
 
 model TimeLog {
-  timeLogTitle String?
   activity     Activity @relation(fields: [activityId], references: [id])
   activityId   String
   id           String   @id @default(uuid())
@@ -53,6 +50,9 @@ model TimeLog {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   SessionPhoto String?
+  userTimelogs User     @relation("userTimelogs", fields: [userId], references: [id])
+  userId       String
+  
 
   @@index([activityId])
 }
