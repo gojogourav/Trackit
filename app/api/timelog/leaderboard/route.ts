@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { jwtVerify } from "jose";
-import { getSession } from "next-auth/react";
-import { cookies } from "next/headers";
+
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -25,10 +24,7 @@ export async function GET(req: NextRequest) {
             return user
         }
         // const user = await prisma.user.findUnique({
-        //     where: {
-        //         id: userId
-        //     }
-        // })
+
 
         if (!fetch(userId)) {
             return NextResponse.json({ error: "Unauthorized access" }, { status: 500 })

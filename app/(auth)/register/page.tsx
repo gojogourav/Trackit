@@ -1,5 +1,5 @@
 "use client"
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from "next/image";
 import { CardBody, CardContainer, CardItem } from '@/components/ui/3d-card';
@@ -25,7 +25,6 @@ function Login() {
   const [error, setError] = useState('')
   const [submitting,setIsSubmitting] = useState(false)
   const [success,setSuccess] = useState(false);
-  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

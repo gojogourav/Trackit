@@ -1,8 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { jwtVerify } from "jose";
 
 const prisma = new PrismaClient();

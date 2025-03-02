@@ -1,9 +1,7 @@
 // app/api/users/update/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { getServerSession } from 'next-auth';
-import { useSession } from 'next-auth/react';
+
 import { jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
 const prisma =new PrismaClient()

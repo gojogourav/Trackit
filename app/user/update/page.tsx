@@ -1,7 +1,5 @@
 "use client";
-import { useRef, useState } from 'react';
-import Image from 'next/image';
-import { CldImage } from 'next-cloudinary'
+
 import UpdateUserProfile from '@/components/ui/UpdateUserProfile';
 import UploadPfp from '@/components/ui/UploadPfp';
 

@@ -1,10 +1,6 @@
 import { v2 as cloudinary, UploadStream } from 'cloudinary'
-import { mkdir } from 'fs/promises';
 import { NextRequest, NextResponse } from 'next/server'
-import { join } from 'path';
-import IncomingForm from 'formidable/Formidable';
-import { Readable } from 'stream';
-import { error } from 'console';
+
 import { PrismaClient } from '@prisma/client'
 import { jwtVerify } from 'jose';
 

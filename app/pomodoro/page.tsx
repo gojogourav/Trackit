@@ -2,7 +2,6 @@
 import { AuroraBackground } from '@/components/ui/background';
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from 'react';
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 import {
@@ -373,7 +372,7 @@ function Page() {
                         No activities found. Add a new activity first.
                       </p>
                     ) : (
-                      <div className="max-h-64 ">
+                      <div className="max-h-64 overflow-y-auto">
                         {activities.map((activity) => (
                           <div 
                             key={activity.id} 

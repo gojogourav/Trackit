@@ -1,12 +1,10 @@
 "use client"
-import Profile from '@/components/ui/Profile'
 import { User, Clock, Trophy } from 'lucide-react'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from "framer-motion";
 import { AuroraBackground } from '@/components/ui/background'
 import { useRouter } from 'next/navigation'
-import { cn } from "@/lib/utils";
 
 interface Data {
     userId: string,
