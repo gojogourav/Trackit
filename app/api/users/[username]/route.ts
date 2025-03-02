@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 export default async function GET(
     req: NextRequest,
     { params }: { params: { username: string } }
-) {
+): Promise<NextResponse> {
 
     const username = await params.username
     try {
