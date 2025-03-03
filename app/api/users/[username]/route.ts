@@ -4,13 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 const prisma = new PrismaClient()
-export default async function GET(
-    req: NextRequest,
-    { params }: { params: { username: string } }
-): Promise<NextResponse> {
 
-    const username = await params.username
-    try {
+export async function GET(
+    req: NextRequest,
+    { params }: { params: Promise<{ username: string }> }) {
+
+        try {
+        const {username} = await params
 
         const cookie = await req.cookies.get("access_token")?.value
         const secret = new TextEncoder().encode(process.env.JWT_SECRET)
@@ -19,8 +19,8 @@ export default async function GET(
         const result = await jwtVerify(cookie, secret)
         const payload = result.payload
 
-
         console.log("THIS IS USERNAME", username);
+
 
         const user = await prisma.user.findFirst({
             where: {

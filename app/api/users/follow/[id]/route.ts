@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 
 const prisma = new PrismaClient()
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const token = await request.cookies.get("access_token")?.value;
 
@@ -21,11 +21,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
       const userid = String(payload.user)
 
-      const followingId =  params.id
-      console.log("THIS IS FOLLOWING ID ", followingId);
+      const {id} =  await params
+      console.log("THIS IS FOLLOWING ID ", id);
       console.log("THIS IS USER ID ", userid);
 
-      if (!followingId) {
+      if (!id) {
         return NextResponse.json({ error: 'Missing followerId or followingId' }, { status: 400 });
       }
 
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         where: {
           id: userid!,
           following: {
-            some: { id: followingId }
+            some: { id: id }
           }
         }
 
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       await prisma.user.update({
         where: { id: userid },
         data: {
-          following: isFollowing ? { disconnect: { id: followingId } } : { connect: { id: followingId } },
+          following: isFollowing ? { disconnect: { id: id } } : { connect: { id: id } },
         },
       });
 
