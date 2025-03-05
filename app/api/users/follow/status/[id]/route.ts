@@ -17,11 +17,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     
       const result = await jwtVerify(token, secret);
       const payload = result.payload
-
-
       const userid = String(payload.user)
 
-      const {id} = await params
+      const {id} = await params;
+      console.log("THIS IS IDENTIFIER IN FOLLOW STATUS");
+      
       console.log("THIS IS FOLLOWING ID ", id);
       console.log("THIS IS USER ID ", userid);
 
@@ -33,7 +33,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         where: {
           id: userid!,
           following: {
-            some: { id: id }
+            some: {
+              OR:[{id},{username:id}]
+            }
           }
         }
 

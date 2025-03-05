@@ -42,12 +42,11 @@ function Leaderboard() {
     useEffect(() => { fetchLeaderBoard(); }, [])
 
     return (
-        <AuroraBackground>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                className="w-full max-w-4xl px-4  sm:px-6 lg:px-8 py-12"
+                className="w-full max-w-4xl px-4 h-full mt-10  sm:px-6 lg:px-8 py-12"
             >
                 <motion.div
                     initial={{ scale: 0.95 }}
@@ -139,7 +138,6 @@ function Leaderboard() {
                     )}
                 </motion.div>
             </motion.div>
-        </AuroraBackground>
     )
 }
 

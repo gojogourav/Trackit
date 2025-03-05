@@ -21,9 +21,9 @@ export default function ImageUploader() {
 
 
   return (
-    <div className='h-screen flex  grid-cols-3 content-center'>
+    <div className=' absolute  inset-0 overflow-hidden h-screen w-full flex  grid-cols-3 content-center object-contain'>
 
-    <div className=" items-center w-8/12 justify-around space-x-16  mx-auto my-auto p-8  flex bg-white rounded-lg shadow-md">
+    <div className="insert items-center  justify-around space-x-16  mx-auto my-auto p-8  flex bg-white rounded-lg shadow-md">
 
     
       <UploadPfp/>

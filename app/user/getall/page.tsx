@@ -77,8 +77,7 @@ function Page() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className=' '   >
-      <AuroraBackground>
+    <div className='h-full mt-10'   >
         <motion.div
           initial={{ opacity: 0.0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -117,7 +116,6 @@ function Page() {
             ))}
           </ul>
         </motion.div>
-      </AuroraBackground>
 
 
 

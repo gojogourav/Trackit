@@ -133,14 +133,13 @@ export default function TimeLogCharts() {
   const activityData = groupByActivity(timeLogs)
 
   return (
-    <AuroraBackground>
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="w-full max-w-6xl  mt-32  "
       >
-        <div className="space-y-6  mt-5  ">
+        <div className="space-y-6  pt-20 ">
           <div className="flex justify-between items-center">
             <h2 className="text-3xl font-bold text-foreground text-white">Time Analytics</h2>
             <Select value={timePeriod} onValueChange={(v: any) => setTimePeriod(v)}>
@@ -255,6 +254,6 @@ export default function TimeLogCharts() {
           </div>
         </div>
       </motion.div>
-    </AuroraBackground>
+    
   )
 }

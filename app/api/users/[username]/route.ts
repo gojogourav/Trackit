@@ -8,9 +8,12 @@ const prisma = new PrismaClient()
 export async function GET(
     req: NextRequest,
     { params }: { params: Promise<{ username: string }> }) {
-
         try {
+            console.log("USERS API IS WORKING");
+            
         const {username} = await params
+        console.log("THIS IS USERNAME 00990", username);
+
 
         const cookie = await req.cookies.get("access_token")?.value
         const secret = new TextEncoder().encode(process.env.JWT_SECRET)
@@ -19,7 +22,6 @@ export async function GET(
         const result = await jwtVerify(cookie, secret)
         const payload = result.payload
 
-        console.log("THIS IS USERNAME", username);
 
 
         const user = await prisma.user.findFirst({

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 
 
 function UploadPfp() {
-    const router =  useRouter()
     const [file, setFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
@@ -38,10 +37,13 @@ function UploadPfp() {
             return;
         }
 
+
         setLoading(true);
         setMessage('');
 
         try {
+
+            
             const formData = new FormData();
             formData.append('image', file);
             formData.append('type', 'profile');
