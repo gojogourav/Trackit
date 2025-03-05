@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 const prisma = new PrismaClient()
-export async function GET(req: NextRequest,{params}:{params:{username:string}}) {
+export async function GET(req: NextRequest,{params}:{params:Promise<{username:string}>}) {
     try {
         const token = await req.cookies.get('access_token')?.value
         const secret = new TextEncoder().encode(process.env.JWT_SECRET)
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest,{params}:{params:{username:string}}) 
         const payload = (await decode).payload
         const userId = String(payload.user)
 
-        const username =  await params.username
+        const {username} =  await params
         console.log("THIS IS USERNAME IN GETUSERTIMELOG",username);
         
 
