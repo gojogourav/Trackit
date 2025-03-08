@@ -2,7 +2,6 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from "next/image";
-import { CardBody, CardContainer, CardItem } from '@/components/ui/3d-card';
 import Link from "next/link";
 
 import { Input } from "@/components/ui/input"
@@ -67,26 +66,23 @@ function Login() {
 
   return (
 
-    <div className='bg-transparent bg-white md:bg-black flex flex-col items-center h-screen  justify-center '>
+    <div className='bg-transparent bg-white md:bg-black flex flex-col items-center  justify-center '>
 
       <div>
-        <CardContainer className="inter-var bg-transparent">
-          <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border  ">
-            <CardItem
-              translateZ="50"
+        <div className="inter-var bg-transparent">
+          <div className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border  ">
+            <div
               className="text-xl font-bold text-neutral-600 dark:text-white"
             >
               TRACKIT
               and change the way you study
-            </CardItem>
-            <CardItem
-              as="p"
-              translateZ="60"
+            </div>
+            <div
               className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
             >
               if toppers can than you can too
-            </CardItem>
-            <CardItem translateZ="100" className="w-full mt-4">
+            </div>
+            <div  className="w-full mt-4">
               <Image
                 src="https://img.freepik.com/premium-photo/girl-is-writing-paper-with-pencil-it_300932-10349.jpg"
                 height="1000"
@@ -94,7 +90,7 @@ function Login() {
                 className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
                 alt="thumbnail"
               />
-            </CardItem>
+            </div>
             <h1 className='justify-center flex mt-4 font-bold text-neutral-700 text-xl'>Register </h1>
 
             {error && (
@@ -178,8 +174,8 @@ function Login() {
               Already have an account? Login here
             </Link>
 
-          </CardBody>
-        </CardContainer>
+          </div>
+        </div>
 
       </div>
     </div>

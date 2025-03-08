@@ -33,7 +33,7 @@ export default function TopBar() {
       href: "/session",
     },
     {
-      title: "leaderboard",
+      title: "LeaderBoard",
       icon: (
         <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
