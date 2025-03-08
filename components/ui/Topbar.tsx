@@ -16,7 +16,6 @@ import { usePathname } from "next/navigation";
 
 export default function TopBar() {
   const path = usePathname()
-  if(path==='/user/update') return;
   const links = [
     {
       title: "Home",
@@ -34,14 +33,14 @@ export default function TopBar() {
       href: "/session",
     },
     {
-      title: "Activity",
+      title: "leaderboard",
       icon: (
         <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
-      href: "/activity",
+      href: "/leaderboard",
     },
     {
-      title: "Leaderboard",
+      title: "Ai Tips",
       icon: (
         <Image
           src="https://assets.aceternity.com/logo-dark.png"
@@ -50,7 +49,7 @@ export default function TopBar() {
           alt="Aceternity Logo"
         />
       ),
-      href: "/leaderboard",
+      href: "/ai",
     },
     {
       title: "Find Friends",
@@ -75,7 +74,7 @@ export default function TopBar() {
     },
   ];
   return (
-    <div className="top-0">
+    <div className="bottom-0 fixed">
       <FloatingDock
         mobileClassName=" translate-y-20"
         items={links}
