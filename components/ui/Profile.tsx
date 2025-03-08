@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import Image from "next/image";
-import { CardBody, CardContainer, CardItem } from "../ui/3d-card";
 import Link from "next/link";
 import FollowUnfollowButton from './followUnfollow';
 import { User } from 'lucide-react'
-import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { format } from 'date-fns'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { motion } from 'framer-motion';
@@ -278,7 +276,7 @@ const Profile = ({ username }: ProfileProps) => {
 
                                 <div className="flex gap-24 mt-10">
                                     <div className="flex-1 h-[300px] w-[300px]">
-                                        <CardTitle className="text-neutral-600">Time Logged ({timePeriod})</CardTitle>
+                                        <div className="text-neutral-600">Time Logged ({timePeriod})</div>
                                         <ResponsiveContainer width="100%" height="100%">
                                             <LineChart data={periodData!}>
                                                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -303,7 +301,7 @@ const Profile = ({ username }: ProfileProps) => {
                                         </ResponsiveContainer>
                                     </div>
                                     <div className="w-[300px] h-[300px]">
-                                        <CardTitle className='text-neutral-600'>Activity Breakdown</CardTitle>
+                                        <div className='text-neutral-600'>Activity Breakdown</div>
                                         <ResponsiveContainer width="100%" height="100%">
                                             <PieChart>
                                                 <Pie

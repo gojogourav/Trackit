@@ -18,11 +18,6 @@ function UpdateUserProfile() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const [file, setFile] = useState<File | null>(null);
-  const [fileUrl, setFileUrl] = useState('');
-  const [image, setImage] = useState('');
-  const [imageUrl, setImageUrl] = useState('')
-
   const formSchema = z.object({
     username: z.string().min(2, {
       message: "Username must be at least 2 characters.",
